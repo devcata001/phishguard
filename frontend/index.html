@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PhishGuard - Detect phishing emails instantly with AI-powered analysis">
+    <title>PhishGuard - AI-Powered Phishing Email Detector</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <header class="nav">
+        <div class="nav__inner">
+            <a href="./" class="brand" aria-label="PhishGuard Home">
+                <span class="brand__mark" aria-hidden="true">
+                    <span class="brand__shield"></span>
+                </span>
+                <span class="brand__name">PhishGuard</span>
+            </a>
+
+            <div class="trust">
+                <span class="trust__lock" aria-hidden="true"></span>
+                <span>Secure</span>
+                <span class="dot">•</span>
+                <span>Private</span>
+                <span class="dot">•</span>
+                <span>Instant</span>
+            </div>
+
+            <button class="nav__toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+                <span class="nav__toggle-lines" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </button>
+
+            <nav class="nav__links" aria-label="Main navigation">
+                <a href="#features">Features</a>
+                <a href="#stats">Stats</a>
+                <a href="#analyzer" class="btn btn--cta">Analyze Email</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero__inner">
+                <h1 class="hero__title">
+                    <span class="hero__title-accent">Detect Phishing Emails</span>
+                    <span class="hero__title-strong">Before It's Too Late</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Instant AI-powered analysis to identify malicious emails.
+                    Protect yourself from scams, fraud, and cyber attacks in seconds.
+                </p>
+
+                <!-- Analyzer Card -->
+                <div id="analyzer" class="card">
+                    <div class="card__header">
+                        <div class="card__title">
+                            <span class="card__icon" aria-hidden="true">✉️</span>
+                            <span>Email Analyzer</span>
+                        </div>
+                    </div>
+
+                    <label for="emailInput" class="sr-only">Paste email content</label>
+                    <textarea id="emailInput" class="textarea"
+                        placeholder="Paste your suspicious email content here...&#10;&#10;Include the subject line, sender email, and full message body for accurate analysis."
+                        spellcheck="false" aria-describedby="statusText"></textarea>
+
+                    <div class="card__footer">
+                        <div class="privacy">
+                            <span class="privacy__dot" aria-hidden="true"></span>
+                            <span>100% Private - No data stored</span>
+                        </div>
+
+                        <div class="card__actions">
+                            <button id="clearBtn" class="btn btn--ghost" type="button">
+                                Clear
+                            </button>
+                            <button id="analyzeBtn" class="btn btn--primary" type="button">
+                                Analyze <span aria-hidden="true">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="statusText" class="card__status" role="status" aria-live="polite"></div>
+
+                    <!-- Results -->
+                    <div id="result" class="result result--empty" aria-live="polite" aria-atomic="true">
+                        <div class="result__top">
+                            <div class="risk">
+                                <div class="risk__label">Risk Level</div>
+                                <div id="riskLevel" class="risk__value">—</div>
+                            </div>
+                            <div class="score">
+                                <div class="score__label">Threat Score</div>
+                                <div id="scoreValue" class="score__value">—</div>
+                            </div>
+                        </div>
+
+                        <div class="explain">
+                            <h3>Detection Details</h3>
+                            <ul id="threatList" class="threats"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="section">
+            <div class="section__head">
+                <div class="kicker">
+                    <span class="kicker__item">
+                        <span class="kicker__dot kicker__dot--green" aria-hidden="true"></span>
+                        Free Forever
+                    </span>
+                    <span class="kicker__item">
+                        <span class="kicker__dot kicker__dot--yellow" aria-hidden="true"></span>
+                        Instant Results
+                    </span>
+                    <span class="kicker__item">
+                        <span class="kicker__dot kicker__dot--blue" aria-hidden="true"></span>
+                        Privacy First
+                    </span>
+                </div>
+                <h2>How PhishGuard Protects You</h2>
+                <p>Advanced multi-layer detection technology keeps you safe from sophisticated phishing attacks</p>
+            </div>
+
+            <div class="features">
+                <article class="feature">
+                    <div class="feature__icon feature__icon--blue" aria-hidden="true">�</div>
+                    <h3>Intelligent Pattern Detection</h3>
+                    <p>Our AI analyzes email structure, suspicious keywords, urgency tactics, and sender patterns to
+                        identify threats with 98% accuracy.</p>
+                </article>
+
+                <article class="feature">
+                    <div class="feature__icon feature__icon--red" aria-hidden="true">🛡️</div>
+                    <h3>URL & Link Analysis</h3>
+                    <p>Detects malicious links, shortened URLs, lookalike domains, and suspicious redirects before you
+                        click.</p>
+                </article>
+
+                <article class="feature">
+                    <div class="feature__icon feature__icon--green" aria-hidden="true">⚡</div>
+                    <h3>Real-Time Risk Scoring</h3>
+                    <p>Get instant, easy-to-understand risk ratings with detailed explanations of every threat detected.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section id="stats" class="stats">
+            <div class="stats__inner">
+                <div class="stat">
+                    <div class="stat__value">98%</div>
+                    <div class="stat__label">Detection Accuracy</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value">500K+</div>
+                    <div class="stat__label">Emails Analyzed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value">&lt;2s</div>
+                    <div class="stat__label">Average Analysis Time</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__value">100%</div>
+                    <div class="stat__label">Privacy Protected</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner">
+            <div class="footer-brand">
+                <div class="footer-brand__top">
+                    <span class="brand__mark brand__mark--small" aria-hidden="true">
+                        <span class="brand__shield"></span>
+                    </span>
+                    <strong>PhishGuard</strong>
+                </div>
+                <p>Protecting users from phishing attacks with advanced AI detection technology.</p>
+            </div>
+
+
+            <div class="footer-col">
+                <h4>Product</h4>
+                <a href="#analyzer">Email Analyzer</a>
+                <a href="#features">Features</a>
+                <a href="#stats">Statistics</a>
+                <a href="#">API Access</a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <a href="#">Security Guide</a>
+                <a href="#">Documentation</a>
+                <a href="#">Support</a>
+                <a href="#">Blog</a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Company</h4>
+                <a href="./">Home</a>
+                <a href="#">About Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+
+        <div class="site-footer__bottom">
+            <span>© 2026 PhishGuard. All rights reserved.</span>
+            <div class="social" aria-label="Social media links">
+                <a href="#" aria-label="Twitter" title="Follow us on Twitter">𝕏</a>
+                <a href="#" aria-label="LinkedIn" title="Connect on LinkedIn">in</a>
+                <a href="#" aria-label="GitHub" title="View on GitHub">⌂</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./site.js"></script>
+    <script src="./app.js"></script>
+</body>
+
+</html>
