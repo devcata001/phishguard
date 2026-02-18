@@ -41,19 +41,13 @@ app.use(securityHeaders);
 
 // CORS configuration
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, Postman, etc.)
-        if (!origin) return callback(null, true);
-
-        if (config.security.allowedOrigins.includes(origin) ||
-            config.security.allowedOrigins.includes('*')) {
-            callback(null, true);
-        } else {
-            logger.warn(`CORS blocked origin: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
+    origin: config.security.allowedOrigins.includes('*') ? '*' : [
+        'https://phishguard-orpin.vercel.app',
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ],
+    credentials: false,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
