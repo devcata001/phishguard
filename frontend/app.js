@@ -11,7 +11,7 @@ const API_BASE_URL = window.location.hostname === 'localhost' ||
     window.location.hostname === '' ||
     window.location.protocol === 'file:'
     ? "http://127.0.0.1:5000"
-    : "https://phishguard-api-nodejs.onrender.com";  // UPDATE THIS with your actual Render URL
+    : "https://phishguard-3i7x.onrender.com";
 
 const els = {
     emailInput: document.getElementById("emailInput"),
