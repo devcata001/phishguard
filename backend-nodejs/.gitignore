@@ -3,10 +3,10 @@ node_modules/
 package-lock.json
 yarn.lock
 
-# Environment variables (keep secret!)
+# Environment variables
 .env
-.env.*
-!.env.example
+.env.local
+.env.*.local
 
 # Logs
 logs/
@@ -18,11 +18,10 @@ yarn-error.log*
 # Testing
 coverage/
 .nyc_output/
-*.lcov
 
 # IDE
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
@@ -34,6 +33,3 @@ Thumbs.db
 # Build
 dist/
 build/
-
-# Misc
-.cache/

@@ -1,0 +1,43 @@
+# Render.com Deployment Configuration
+# https://render.com/docs/yaml-spec
+
+services:
+  # Backend API Service
+  - type: web
+    name: phishguard-api-nodejs
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: PORT
+        value: 5000
+
+      - key: HOST
+        value: 0.0.0.0
+
+      - key: LOG_LEVEL
+        value: info
+
+      - key: MAX_TEXT_LENGTH
+        value: 100000
+
+      - key: RATE_LIMIT_REQUESTS
+        value: 30
+
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 60000
+
+      - key: ALLOWED_ORIGINS
+        value: https://your-frontend-domain.com,http://localhost:5173
+
+      - key: GEMINI_API_KEY
+        sync: false # Set this in Render dashboard
+
+    autoDeploy: true

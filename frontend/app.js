@@ -1,13 +1,17 @@
 /*
   PhishGuard frontend logic
-  - Calls the Flask backend API
+  - Calls the Node.js/Express backend API with AI detection
   - Renders results with color-coded risk level
+  - Shows AI analysis confidence when available
 */
 
 // Use environment-based URL: localhost for dev, Render URL for production
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const API_BASE_URL = window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '' ||
+    window.location.protocol === 'file:'
     ? "http://127.0.0.1:5000"
-    : "https://phishguard-api.onrender.com";  // UPDATE THIS with your actual Render URL
+    : "https://phishguard-api-nodejs.onrender.com";  // UPDATE THIS with your actual Render URL
 
 const els = {
     emailInput: document.getElementById("emailInput"),
@@ -53,8 +57,10 @@ function riskLabel(risk) {
 
 function renderResult(payload) {
     const risk = normalizeRisk(payload?.risk_level);
-    const score = payload?.score;
-    const reasons = Array.isArray(payload?.reasons) ? payload.reasons : [];
+    const score = payload?.risk_score || payload?.score;  // Support both formats
+    const reasons = Array.isArray(payload?.flags) ? payload.flags :
+        Array.isArray(payload?.reasons) ? payload.reasons : [];
+    const aiAnalysis = payload?.ai_analysis;
 
     els.result.dataset.risk = risk;
     els.result.classList.remove("result--empty");
@@ -64,6 +70,16 @@ function renderResult(payload) {
 
     // Reset list
     els.threatList.innerHTML = "";
+
+    // Show AI analysis info if available
+    if (aiAnalysis?.enabled && aiAnalysis?.confidence) {
+        const aiLi = document.createElement("li");
+        aiLi.style.fontWeight = "600";
+        aiLi.style.color = "#22c55e";
+        const confidence = Math.round(aiAnalysis.confidence * 100);
+        aiLi.textContent = `🤖 AI Detection Active (${confidence}% confidence)`;
+        els.threatList.appendChild(aiLi);
+    }
 
     if (reasons.length === 0) {
         const li = document.createElement("li");
