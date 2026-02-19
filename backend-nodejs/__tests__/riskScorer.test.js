@@ -66,6 +66,16 @@ describe('Risk Scoring Utility', () => {
             const score = combineScores(aiResult, 82);
             expect(score).toBeGreaterThanOrEqual(82);
         });
+
+        test('should preserve suspicious heuristic score when AI is confidently wrong', () => {
+            const aiResult = {
+                phishingProbability: 0.02,
+                confidence: 0.98,
+            };
+
+            const score = combineScores(aiResult, 45);
+            expect(score).toBeGreaterThanOrEqual(45);
+        });
     });
 
     describe('mergeRiskFactors', () => {

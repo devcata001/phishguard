@@ -54,18 +54,14 @@ export const combineScores = (aiResult, heuristicScore) => {
         return Math.min(baseScore * 1.15, 100);
     }
 
-    // If AI confidence is very high, trust it more
-    if (aiResult.confidence >= 0.9) {
-        // Preserve severe heuristic findings (e.g., seed phrase theft scams)
-        if (heuristicScore >= 70) {
-            return Math.min(Math.max(aiScore, heuristicScore), 100);
-        }
-        return Math.min(aiScore, 100);
+    // Never suppress suspicious heuristic findings with low AI probability
+    if (heuristicScore >= config.risk.suspiciousThreshold) {
+        return Math.min(Math.max(baseScore, heuristicScore), 100);
     }
 
-    // Guardrail: very strong heuristic signals should not be overly diluted by AI false negatives
-    if (heuristicScore >= 70) {
-        return Math.min(Math.max(baseScore, heuristicScore), 100);
+    // If AI confidence is very high, trust it more
+    if (aiResult.confidence >= 0.9) {
+        return Math.min(aiScore, 100);
     }
 
     return Math.min(baseScore, 100);

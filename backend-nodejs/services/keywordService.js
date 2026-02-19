@@ -85,10 +85,17 @@ const KEYWORD_CATEGORIES = {
             'wallet recovery', 'recover your wallet', 'wallet restore',
             'private key', 'mnemonic phrase', '12 word phrase',
             '24 word phrase', 'wallet verification phrase',
-            'import your wallet', 'synchronize your wallet'
+            'import your wallet', 'synchronize your wallet',
+            'old wallet', 'old wallet seed', 'old wallet phrase',
+            'wallet scope'
         ],
     },
 };
+
+const CONTEXT_SCAM_PATTERNS = [
+    /(need|send|share|provide|give).{0,40}(old\s+wallet).{0,40}(seed\s*phrase|recovery\s*phrase|mnemonic|private\s*key|wallet\s*phrase)/i,
+    /(old\s+wallet).{0,40}(seed\s*phrase|recovery\s*phrase|mnemonic|private\s*key|wallet\s*phrase)/i,
+];
 
 /**
  * Known phishing phrases (higher weight)
@@ -149,6 +156,13 @@ export const scanKeywords = (text) => {
     if (phraseMatches.length > 0) {
         score += phraseMatches.length * 15;
         reasons.push(`Critical phishing phrases found: ${phraseMatches.slice(0, 2).join(', ')}`);
+    }
+
+    // Contextual wallet-drain scam patterns
+    const contextMatches = CONTEXT_SCAM_PATTERNS.filter((pattern) => pattern.test(text));
+    if (contextMatches.length > 0) {
+        score += 30;
+        reasons.push('Contextual wallet recovery scam language detected');
     }
 
     return { score, reasons };
