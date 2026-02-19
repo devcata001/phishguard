@@ -42,6 +42,14 @@ describe('Heuristic Detection Service', () => {
             expect(result.score).toBeGreaterThan(0);
         });
 
+        test('should strongly detect wallet seed phrase scam language', () => {
+            const text = 'Urgent wallet recovery required. Share your seed phrase and private key now to restore access.';
+            const result = analyzeHeuristics(text);
+
+            expect(result.score).toBeGreaterThanOrEqual(70);
+            expect(result.reasons.some(r => r.toLowerCase().includes('walletrecoveryscam'))).toBe(true);
+        });
+
         test('should detect excessive exclamation marks', () => {
             const text = 'Amazing offer!!!! Click now!!!!! Limited time!!!!!';
             const result = analyzeHeuristics(text);

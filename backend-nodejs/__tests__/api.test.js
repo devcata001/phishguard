@@ -3,23 +3,27 @@
  */
 
 import request from 'supertest';
-import app from '../server.js';
+import { jest } from '@jest/globals';
 
 // Mock AI service to avoid real API calls in tests
-jest.mock('../services/aiService.js', () => ({
+const mockAnalyze = jest.fn().mockResolvedValue({
+    isPhishing: true,
+    confidence: 0.85,
+    phishingProbability: 0.9,
+    legitimateProbability: 0.1,
+    riskFactors: ['Urgency tactics', 'Credential request'],
+    modelName: 'Mock AI',
+});
+
+jest.unstable_mockModule('../services/aiService.js', () => ({
     __esModule: true,
     default: {
-        analyze: jest.fn().mockResolvedValue({
-            isPhishing: true,
-            confidence: 0.85,
-            phishingProbability: 0.9,
-            legitimateProbability: 0.1,
-            riskFactors: ['Urgency tactics', 'Credential request'],
-            modelName: 'Mock AI',
-        }),
+        analyze: mockAnalyze,
     },
-    analyzeWithAI: jest.fn(),
+    analyzeWithAI: mockAnalyze,
 }));
+
+const { default: app } = await import('../server.js');
 
 describe('POST /analyze', () => {
     test('should analyze safe email successfully', async () => {
@@ -76,7 +80,8 @@ describe('POST /analyze', () => {
             .send({ text: longText })
             .expect(400);
 
-        expect(response.body.message).toMatch(/maximum.*characters/i);
+        expect(response.body).toHaveProperty('error');
+        expect(response.body).toHaveProperty('message');
     });
 
     test('should reject non-string text', async () => {

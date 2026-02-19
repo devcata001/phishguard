@@ -142,6 +142,8 @@ ${messageText}
 - Urgency and fear tactics
 - Suspicious links or URLs (including shortened links)
 - Requests for sensitive information (passwords, credit cards, SSN, OTP codes)
+- Requests for crypto secrets (seed phrase, recovery phrase, mnemonic, private key)
+- Wallet support/recovery impersonation asking to "verify" or "restore" wallet access
 - Impersonation of legitimate organizations or people
 - Grammar and spelling errors
 - Spoofed sender addresses or phone numbers

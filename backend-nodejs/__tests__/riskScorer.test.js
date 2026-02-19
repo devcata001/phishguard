@@ -9,23 +9,22 @@ import {
     validateScore,
     RiskLevel,
 } from '../utils/riskScorer.js';
+import config from '../config.js';
 
 describe('Risk Scoring Utility', () => {
     describe('calculateRiskLevel', () => {
-        test('should return SAFE for scores below 40', () => {
+        test('should return SAFE for scores below suspicious threshold', () => {
             expect(calculateRiskLevel(0)).toBe(RiskLevel.SAFE);
-            expect(calculateRiskLevel(20)).toBe(RiskLevel.SAFE);
-            expect(calculateRiskLevel(39)).toBe(RiskLevel.SAFE);
+            expect(calculateRiskLevel(config.risk.suspiciousThreshold - 1)).toBe(RiskLevel.SAFE);
         });
 
-        test('should return SUSPICIOUS for scores 40-69', () => {
-            expect(calculateRiskLevel(40)).toBe(RiskLevel.SUSPICIOUS);
-            expect(calculateRiskLevel(55)).toBe(RiskLevel.SUSPICIOUS);
-            expect(calculateRiskLevel(69)).toBe(RiskLevel.SUSPICIOUS);
+        test('should return SUSPICIOUS for scores between suspicious and high thresholds', () => {
+            expect(calculateRiskLevel(config.risk.suspiciousThreshold)).toBe(RiskLevel.SUSPICIOUS);
+            expect(calculateRiskLevel(config.risk.highThreshold - 1)).toBe(RiskLevel.SUSPICIOUS);
         });
 
-        test('should return HIGH_RISK for scores 70+', () => {
-            expect(calculateRiskLevel(70)).toBe(RiskLevel.HIGH_RISK);
+        test('should return HIGH_RISK for scores at or above high threshold', () => {
+            expect(calculateRiskLevel(config.risk.highThreshold)).toBe(RiskLevel.HIGH_RISK);
             expect(calculateRiskLevel(85)).toBe(RiskLevel.HIGH_RISK);
             expect(calculateRiskLevel(100)).toBe(RiskLevel.HIGH_RISK);
         });
@@ -56,6 +55,16 @@ describe('Risk Scoring Utility', () => {
 
             const score = combineScores(aiResult, 100);
             expect(score).toBeLessThanOrEqual(100);
+        });
+
+        test('should preserve high heuristic risk when AI probability is low', () => {
+            const aiResult = {
+                phishingProbability: 0.05,
+                confidence: 0.95,
+            };
+
+            const score = combineScores(aiResult, 82);
+            expect(score).toBeGreaterThanOrEqual(82);
         });
     });
 

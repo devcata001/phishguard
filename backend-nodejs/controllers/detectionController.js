@@ -1,9 +1,4 @@
-/**
- * Detection Controller
- * 
- * Orchestrates AI and heuristic analysis for phishing detection.
- * Combines multiple detection layers and produces final risk assessment.
- */
+
 
 import geminiAI from '../services/aiService.js';
 import { analyzeHeuristic } from '../services/heuristicService.js';

@@ -78,6 +78,16 @@ const KEYWORD_CATEGORIES = {
             'residual income', 'leverage', 'compound interest daily'
         ],
     },
+    walletRecoveryScam: {
+        score: 40,
+        keywords: [
+            'seed phrase', 'recovery phrase', 'secret recovery phrase',
+            'wallet recovery', 'recover your wallet', 'wallet restore',
+            'private key', 'mnemonic phrase', '12 word phrase',
+            '24 word phrase', 'wallet verification phrase',
+            'import your wallet', 'synchronize your wallet'
+        ],
+    },
 };
 
 /**
@@ -104,6 +114,14 @@ const HIGH_RISK_PHRASES = [
     'claim your prize now',
     'verify to unlock',
     'double your investment',
+    'share your seed phrase',
+    'send your seed phrase',
+    'provide your recovery phrase',
+    'enter your recovery phrase',
+    'confirm your wallet phrase',
+    'share your private key',
+    'wallet recovery required',
+    'restore wallet now',
 ];
 
 /**
@@ -181,7 +199,8 @@ export const analyzeBehavior = (text) => {
     const sensitiveRequests = [
         'social security', 'ssn', 'date of birth', 'dob',
         'mother\'s maiden name', 'passport number', 'driver\'s license',
-        'account number', 'routing number', 'pin number', 'cvv'
+        'account number', 'routing number', 'pin number', 'cvv',
+        'seed phrase', 'recovery phrase', 'private key', 'wallet phrase'
     ];
 
     const sensitiveMatches = sensitiveRequests.filter(term => textLower.includes(term));

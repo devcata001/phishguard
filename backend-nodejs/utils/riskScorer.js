@@ -35,7 +35,7 @@ export const calculateRiskLevel = (score) => {
  * Strategy:
  * - If AI is available, weight it more heavily (70% AI, 30% heuristic)
  * - If AI indicates high risk, boost overall score
- * - Heuristics can increase but not decrease AI score
+ * - Strong heuristic signals can override weak AI output
  */
 export const combineScores = (aiResult, heuristicScore) => {
     if (!aiResult) {
@@ -56,7 +56,16 @@ export const combineScores = (aiResult, heuristicScore) => {
 
     // If AI confidence is very high, trust it more
     if (aiResult.confidence >= 0.9) {
+        // Preserve severe heuristic findings (e.g., seed phrase theft scams)
+        if (heuristicScore >= 70) {
+            return Math.min(Math.max(aiScore, heuristicScore), 100);
+        }
         return Math.min(aiScore, 100);
+    }
+
+    // Guardrail: very strong heuristic signals should not be overly diluted by AI false negatives
+    if (heuristicScore >= 70) {
+        return Math.min(Math.max(baseScore, heuristicScore), 100);
     }
 
     return Math.min(baseScore, 100);
