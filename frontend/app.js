@@ -134,6 +134,7 @@ async function analyzeEmail() {
         }
 
         renderResult(data);
+        els.emailInput.value = "";
     } catch (err) {
         renderError(
             "Could not reach the backend. Start it first, then refresh this page."
