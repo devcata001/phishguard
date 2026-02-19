@@ -55,12 +55,59 @@ function riskLabel(risk) {
     }
 }
 
-function renderResult(payload) {
-    const risk = normalizeRisk(payload?.risk_level);
-    const score = payload?.risk_score || payload?.score;  // Support both formats
-    const reasons = Array.isArray(payload?.flags) ? payload.flags :
+function detectObviousScamSignals(text) {
+    const normalized = String(text || "").toLowerCase();
+
+    const patterns = [
+        /(old\s+account\s+phrase|old\s+wallet\s+phrase|seed\s*phrase|recovery\s*phrase|private\s*key)/i,
+        /(rug\s*pull|rug\s*coins?|pump\s*and\s*dump|wash\s*trading)/i,
+        /(spray(ing)?|shill(ing)?|ape(d)?).{0,80}(token|coin|buyers?|buy)/i,
+        /(transaction\s*history).{0,80}(buyers?|buy|profit|x10|10x|sol)/i,
+    ];
+
+    const matched = patterns.filter((pattern) => pattern.test(normalized));
+
+    if (matched.length === 0) {
+        return null;
+    }
+
+    return {
+        risk_level: 'HIGH_RISK',
+        risk_score: 85,
+        flags: [
+            'High-risk scam language detected (wallet phrase/private key request)',
+            'Potential market manipulation intent detected (rug-pull/pump behavior)',
+        ],
+    };
+}
+
+function applySafetyNet(payload, sourceText) {
+    const backendRisk = normalizeRisk(payload?.risk_level);
+    const backendReasons = Array.isArray(payload?.flags) ? payload.flags :
         Array.isArray(payload?.reasons) ? payload.reasons : [];
-    const aiAnalysis = payload?.ai_analysis;
+
+    if (backendRisk !== 'SAFE' || backendReasons.length > 0) {
+        return payload;
+    }
+
+    const fallback = detectObviousScamSignals(sourceText);
+    if (!fallback) {
+        return payload;
+    }
+
+    return {
+        ...payload,
+        ...fallback,
+    };
+}
+
+function renderResult(payload, sourceText = "") {
+    const normalizedPayload = applySafetyNet(payload, sourceText);
+    const risk = normalizeRisk(normalizedPayload?.risk_level);
+    const score = normalizedPayload?.risk_score ?? normalizedPayload?.score;  // Support both formats and preserve 0
+    const reasons = Array.isArray(normalizedPayload?.flags) ? normalizedPayload.flags :
+        Array.isArray(normalizedPayload?.reasons) ? normalizedPayload.reasons : [];
+    const aiAnalysis = normalizedPayload?.ai_analysis;
 
     els.result.dataset.risk = risk;
     els.result.classList.remove("result--empty");
@@ -133,7 +180,7 @@ async function analyzeEmail() {
             return;
         }
 
-        renderResult(data);
+        renderResult(data, emailText);
         els.emailInput.value = "";
     } catch (err) {
         renderError(
