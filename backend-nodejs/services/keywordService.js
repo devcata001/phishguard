@@ -90,11 +90,25 @@ const KEYWORD_CATEGORIES = {
             'wallet scope'
         ],
     },
+    marketManipulationScam: {
+        score: 35,
+        keywords: [
+            'rug pull', 'rug coins', 'pump and dump', 'wash trading',
+            'fake volume', 'exit liquidity', 'market manipulation',
+            'shill token', 'shilling', 'spraying', 'spray buys',
+            'ape in', 'aped', '10x profit', 'x10 profit',
+            'double your sol', 'more sol', 'buyers can see',
+            'transaction history boost', 'fake transactions', 'fake wallet history'
+        ],
+    },
 };
 
 const CONTEXT_SCAM_PATTERNS = [
     /(need|send|share|provide|give).{0,40}(old\s+wallet).{0,40}(seed\s*phrase|recovery\s*phrase|mnemonic|private\s*key|wallet\s*phrase)/i,
     /(old\s+wallet).{0,40}(seed\s*phrase|recovery\s*phrase|mnemonic|private\s*key|wallet\s*phrase)/i,
+    /(old\s+account\s+phrase|account\s+phrase).{0,60}(transaction\s*history|transactions?)/i,
+    /(rug\s*pull|rug\s*coins?).{0,80}(buyers?|buy|profit|10x|x10|sol)/i,
+    /(spray(ing)?|shill(ing)?|ape(d)?).{0,80}(token|coin|buyers?|buy)/i,
 ];
 
 /**

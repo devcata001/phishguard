@@ -58,6 +58,14 @@ describe('Heuristic Detection Service', () => {
             expect(result.reasons.some(r => r.toLowerCase().includes('wallet'))).toBe(true);
         });
 
+        test('should detect rug-pull manipulation wording with account phrase and fake transaction intent', () => {
+            const text = 'i needed an old account phrase with transactions history in it so that I can use it for shifting and spraying of my rug coins into the account so then buyers can see someone have apede on the token so that they can also buy as well then rug because I base on rug pull then get x 10 of profit';
+            const result = analyzeHeuristics(text);
+
+            expect(result.score).toBeGreaterThanOrEqual(60);
+            expect(result.reasons.some(r => r.toLowerCase().includes('marketmanipulationscam'))).toBe(true);
+        });
+
         test('should detect excessive exclamation marks', () => {
             const text = 'Amazing offer!!!! Click now!!!!! Limited time!!!!!';
             const result = analyzeHeuristics(text);
