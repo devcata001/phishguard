@@ -11,12 +11,18 @@ import logger from '../utils/logger.js';
  * Known phishing and suspicious domains
  */
 const SUSPICIOUS_DOMAINS = [
-    // Common phishing domains
-    'bit.ly', 'tinyurl.com', 'goo.gl', 'ow.ly', 't.co',
-    // Typosquatting examples (add more as needed)
-    'paypa1.com', 'gooogle.com', 'microsft.com',
-    // Generic suspicious TLDs
-    '.tk', '.ml', '.ga', '.cf', '.gq',
+    // Common URL shorteners
+    'bit.ly', 'tinyurl.com', 'goo.gl', 'ow.ly', 't.co', 'clck.ru', 'cutt.ly',
+    'short.io', 's.id', 'rebrand.ly', 'tiny.cc', 'is.gd', 'buff.ly', 'shorturl.at',
+    // Typosquatting examples
+    'paypa1.com', 'gooogle.com', 'microsft.com', 'netfIix.com', 'arnaz0n.com',
+    // Suspicious TLDs - Free/cheap domains often used for scams
+    '.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.top', '.work', '.click',
+    '.link', '.online', '.site', '.website', '.space', '.tech', '.store',
+    '.pw', '.cc', '.ws', '.info', '.biz', '.su', '.ru', '.cn',
+    // Crypto/Investment scam domains
+    '.icu', '.club', '.vip', '.win', '.bid', '.racing', '.loan', '.trade',
+    '.accountant', '.faith', '.cricket', '.science', '.download', '.party',
 ];
 
 /**
@@ -112,6 +118,62 @@ const hasHomographAttack = (url) => {
 };
 
 /**
+ * Check for brand impersonation in URL (e.g., facebook.com-recovery@malicious.com)
+ */
+const hasBrandImpersonation = (url) => {
+    const popularBrands = [
+        'facebook', 'google', 'microsoft', 'apple', 'amazon', 'paypal',
+        'netflix', 'instagram', 'twitter', 'linkedin', 'dropbox', 'adobe',
+        'bank', 'secure', 'account', 'verify', 'login', 'signin', 'coinbase',
+        'binance', 'kraken', 'metamask', 'trustwallet', 'blockchain'
+    ];
+
+    // Extract the part before @ in URLs with credentials
+    if (!/@/.test(url)) return false;
+
+    const beforeAt = url.split('@')[0].toLowerCase();
+    return popularBrands.some(brand => beforeAt.includes(brand));
+};
+
+/**
+ * Check for investment/ponzi scam patterns in URL
+ */
+const hasScamPattern = (url) => {
+    const scamPatterns = [
+        'invest', 'profit', 'earn', 'crypto', 'bitcoin', 'mining',
+        'double', 'triple', 'roi', 'passive-income', 'guaranteed',
+        'bonus', 'referral', 'reward', 'claim', 'prize', 'winner',
+        'giveaway', 'airdrop', 'presale', 'ido', 'nft-mint'
+    ];
+
+    const urlLower = url.toLowerCase();
+    const matchCount = scamPatterns.filter(pattern => urlLower.includes(pattern)).length;
+
+    // Multiple scam keywords = very suspicious
+    return matchCount >= 2;
+};
+
+/**
+ * Check for cryptocurrency wallet address patterns
+ */
+const hasCryptoAddress = (text) => {
+    const cryptoPatterns = {
+        bitcoin: /(?:^|[^a-zA-Z0-9])[13][a-km-zA-HJ-NP-Z1-9]{25,34}(?:[^a-zA-Z0-9]|$)/g, // BTC addresses
+        ethereum: /(?:^|[^a-zA-Z0-9])0x[a-fA-F0-9]{40}(?:[^a-zA-Z0-9]|$)/g, // ETH addresses
+        litecoin: /(?:^|[^a-zA-Z0-9])[LM3][a-km-zA-HJ-NP-Z1-9]{26,33}(?:[^a-zA-Z0-9]|$)/g, // LTC addresses
+        // Simpler catchall for common crypto addresses
+        genericCrypto: /(?:wallet|address|send to|transfer to)[\s:]+[a-zA-Z0-9]{26,50}/gi,
+    };
+
+    for (const [type, pattern] of Object.entries(cryptoPatterns)) {
+        if (pattern.test(text)) {
+            return true;
+        }
+    }
+    return false;
+};
+
+/**
  * Analyze URLs in text
  */
 export const analyzeUrls = (text) => {
@@ -145,10 +207,22 @@ export const analyzeUrls = (text) => {
                 reasons.push('URL contains embedded credentials');
             }
 
+            // Brand impersonation in URL
+            if (hasBrandImpersonation(url)) {
+                score += 20;
+                reasons.push('URL contains brand impersonation attempt');
+            }
+
             // Known suspicious domains
             if (hasSuspiciousDomain(url)) {
                 score += 15;
                 reasons.push(`Known suspicious domain in URL`);
+            }
+
+            // Investment/Ponzi scam patterns
+            if (hasScamPattern(url)) {
+                score += 25;
+                reasons.push('URL contains investment/scam-related keywords');
             }
 
             // Suspicious ports
@@ -174,6 +248,12 @@ export const analyzeUrls = (text) => {
                 score += 5;
                 reasons.push('Insecure HTTP URL detected');
             }
+        }
+
+        // Check for cryptocurrency addresses in text (major red flag)
+        if (hasCryptoAddress(text)) {
+            score += 30;
+            reasons.push('Cryptocurrency wallet address detected - potential scam');
         }
 
         logger.debug(`URL analysis: ${urls.length} URLs found, score=${score}`);

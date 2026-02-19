@@ -68,8 +68,8 @@ const config = {
 
     // Risk Thresholds
     risk: {
-        highThreshold: 70,
-        suspiciousThreshold: 40,
+        highThreshold: 60,      // Lowered from 70 for more aggressive detection
+        suspiciousThreshold: 30, // Lowered from 40 to catch more threats
         safeThreshold: 0,
     },
 };

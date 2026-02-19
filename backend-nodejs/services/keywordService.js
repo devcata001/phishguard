@@ -54,6 +54,30 @@ const KEYWORD_CATEGORIES = {
             'valued customer', 'account holder'
         ],
     },
+    cryptoScam: {
+        score: 25,
+        keywords: [
+            'double your bitcoin', 'triple your crypto', 'guaranteed returns',
+            'investment opportunity', 'passive income', 'financial freedom',
+            'get rich quick', 'earn money fast', 'limited slots',
+            'exclusive investment', 'crypto giveaway', 'free bitcoin',
+            'elon musk giveaway', 'nft airdrop', 'token presale',
+            'yield farming', '100x returns', 'moonshot', 'pump',
+            'mining pool', 'cloud mining', 'invest now', 'roi guaranteed'
+        ],
+    },
+    ponziScheme: {
+        score: 30,
+        keywords: [
+            'mlm', 'multi-level marketing', 'network marketing',
+            'pyramid scheme', 'referral bonus', 'recruit members',
+            'downline', 'upline', 'matrix system', 'cycler',
+            'gifting circle', 'cash gifting', 'make money from home',
+            'be your own boss', 'no experience needed', 'easy money',
+            'join now and earn', 'unlimited income potential',
+            'residual income', 'leverage', 'compound interest daily'
+        ],
+    },
 };
 
 /**
@@ -68,6 +92,18 @@ const HIGH_RISK_PHRASES = [
     'suspended due to',
     'click here to verify',
     're-enter your password',
+    'send money now',
+    'wire transfer',
+    'send bitcoin to',
+    'wallet address',
+    'investment returns guaranteed',
+    'risk-free investment',
+    'limited time offer expires',
+    'act now before',
+    'congratulations you won',
+    'claim your prize now',
+    'verify to unlock',
+    'double your investment',
 ];
 
 /**
