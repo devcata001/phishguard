@@ -76,6 +76,30 @@ describe('Risk Scoring Utility', () => {
             const score = combineScores(aiResult, 45);
             expect(score).toBeGreaterThanOrEqual(45);
         });
+
+        test('should boost score when AI marks message as phishing with high confidence', () => {
+            const aiResult = {
+                isPhishing: true,
+                phishingProbability: 0.35,
+                confidence: 0.92,
+                riskFactors: ['factor1'],
+            };
+
+            const score = combineScores(aiResult, 10);
+            expect(score).toBeGreaterThanOrEqual(55);
+        });
+
+        test('should boost score when AI provides multiple phishing risk factors', () => {
+            const aiResult = {
+                isPhishing: true,
+                phishingProbability: 0.4,
+                confidence: 0.75,
+                riskFactors: ['urgency', 'credential theft', 'impersonation'],
+            };
+
+            const score = combineScores(aiResult, 5);
+            expect(score).toBeGreaterThanOrEqual(57);
+        });
     });
 
     describe('mergeRiskFactors', () => {

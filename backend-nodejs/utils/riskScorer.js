@@ -43,8 +43,18 @@ export const combineScores = (aiResult, heuristicScore) => {
         return Math.min(heuristicScore, 100);
     }
 
-    // AI-enhanced scoring
-    const aiScore = aiResult.phishingProbability * 100;
+    // AI-enhanced scoring with calibration
+    let aiScore = aiResult.phishingProbability * 100;
+
+    // If AI explicitly classifies as phishing with good confidence, raise floor
+    if (aiResult.isPhishing && aiResult.confidence >= 0.8) {
+        aiScore = Math.max(aiScore, 75);
+    }
+
+    // Multiple concrete AI risk factors should increase trust in phishing verdict
+    if (aiResult.isPhishing && Array.isArray(aiResult.riskFactors) && aiResult.riskFactors.length >= 3) {
+        aiScore = Math.max(aiScore, 80);
+    }
 
     // Weighted combination: 70% AI, 30% heuristic
     const baseScore = (aiScore * 0.7) + (heuristicScore * 0.3);
